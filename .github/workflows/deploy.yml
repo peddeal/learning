@@ -27,10 +27,14 @@ jobs:
       - name: Build SSR Nuxt app
         run: yarn build
 
-      # 5. Deploy entire project to Azure
+      # 5. Clean wwwroot folder on slot before deploy
+      - name: Clean wwwroot
+        run: rm -rf ./wwwroot
+
+      # 6. Deploy entire project to Azure slot
       - name: Deploy SSR to Azure
         uses: azure/webapps-deploy@v2
         with:
-          app-name: Yadommm-b5d9b8dyasehhtfm       # เปลี่ยนเป็นชื่อ app ของคุณ
+          app-name: Yadommm-b5d9b8dyasehhtfm   # ชื่อ slot / app ของคุณ
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: .  # deploy ทั้ง project ไม่ใช่แค่ .output/*
+          package: .  # deploy ทั้ง project
