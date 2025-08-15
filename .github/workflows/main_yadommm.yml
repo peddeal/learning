@@ -9,23 +9,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. เช็คเอาโค้ด
       - uses: actions/checkout@v4
 
+      # 2. ติดตั้ง Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22.x'
 
-      - name: Install dependencies
-        run: yarn install
+      # 3. ติดตั้ง Yarn (ถ้ายังไม่มี)
+      - name: Install Yarn
+        run: npm install -g yarn
 
+      # 4. ล้าง cache ของ Yarn ก่อนติดตั้ง dependencies
+      - name: Clean Yarn Cache
+        run: yarn cache clean
+
+      # 5. ติดตั้ง dependencies
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # 6. Build Nuxt3
       - name: Build Nuxt3
         run: yarn build
 
+      # 7. Deploy ไป Azure
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'Yadommm'
           slot-name: 'Production'
-          package: .   # deploy โฟลเดอร์ project ทั้งหมด
+          package: ./.output  # สำหรับ Nuxt3 ที่ build จะอยู่ใน .output
           publish-profile: ${{ secrets.__publishingprofilesecretname__ }}
