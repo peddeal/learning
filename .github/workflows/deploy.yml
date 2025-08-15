@@ -1,4 +1,4 @@
-name: Deploy Nuxt3 to Azure
+name: Build and Deploy Nuxt3 SSR to Azure
 
 on:
   push:
@@ -8,24 +8,30 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
-          cache: 'yarn'
+          node-version: 22
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build Nuxt (SSR)
+      - name: Build SSR Nuxt app
         run: yarn build
+
+      - name: Copy build output to wwwroot
+        run: |
+          rm -rf ./wwwroot
+          mkdir wwwroot
+          cp -r .output/* wwwroot/
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: Yadommm
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: .output
+          package: ./wwwroot
