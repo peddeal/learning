@@ -10,28 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout code
       - uses: actions/checkout@v3
 
+      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 22
+          node-version: 18
 
+      # 3. Install dependencies
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      # 4. Build SSR Nuxt app
       - name: Build SSR Nuxt app
         run: yarn build
 
-      - name: Copy build output to wwwroot
-        run: |
-          rm -rf ./wwwroot
-          mkdir wwwroot
-          cp -r .output/* wwwroot/
-
-      - name: Deploy to Azure Web App
+      # 5. Deploy entire project to Azure
+      - name: Deploy SSR to Azure
         uses: azure/webapps-deploy@v2
         with:
-          app-name: Yadommm
+          app-name: YOUR_AZURE_APP_NAME       # เปลี่ยนเป็นชื่อ app ของคุณ
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./wwwroot
+          package: .  # deploy ทั้ง project ไม่ใช่แค่ .output/*
