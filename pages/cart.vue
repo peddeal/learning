@@ -1,0 +1,152 @@
+<template>
+  <v-container class="py-6">
+    <h2 class="text-h5 mb-4">🛒 ตะกร้าสินค้า</h2>
+
+    <!-- รายการสินค้า -->
+    <v-row v-if="cart.length > 0">
+      <v-col cols="12" v-for="(item, index) in cart" :key="index">
+        <v-card class="pa-4 mb-3" outlined>
+          <v-row align="center">
+            <v-col cols="3">
+              <v-img :src="item.image" height="80" contain />
+            </v-col>
+            <v-col cols="5">
+              <div class="font-weight-medium">{{ item.name }}</div>
+              <div class="text-grey">฿{{ item.price }} x {{ item.qty }}</div>
+            </v-col>
+            <v-col cols="4" class="text-right">
+              <v-btn color="red" text @click="removeItem(index)">
+                ลบ
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <div v-else class="text-center grey--text">
+      ไม่มีสินค้าในตะกร้า
+    </div>
+
+    <!-- สรุปสินค้า -->
+    <v-card class="pa-4 mt-4" outlined v-if="cart.length > 0">
+      <v-row>
+        <v-col cols="6">
+          <strong>รวมจำนวนสินค้า:</strong> {{ totalQty }}
+        </v-col>
+        <v-col cols="6" class="text-right">
+          <strong>ราคารวม:</strong> ฿{{ totalPrice }}
+        </v-col>
+      </v-row>
+      <v-btn color="green" class="mt-2" @click="dialog = true">
+        สั่งซื้อ
+      </v-btn>
+    </v-card>
+
+    <!-- Dialog กรอกข้อมูลผู้ซื้อ -->
+    <v-dialog v-model="dialog" max-width="500">
+      <v-card>
+        <v-card-title>
+          <span class="text-h6">กรอกข้อมูลผู้ซื้อ</span>
+        </v-card-title>
+        <v-card-text>
+          <v-text-field v-model="customer.name" label="ชื่อ-นามสกุล" required></v-text-field>
+          <v-text-field v-model="customer.phone" label="เบอร์โทรศัพท์" required></v-text-field>
+          <v-textarea v-model="customer.address" label="ที่อยู่" rows="3" required></v-textarea>
+          <v-textarea v-model="customer.note" label="หมายเหตุ (ถ้ามี)" rows="2"></v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text color="red" @click="dialog = false">ยกเลิก</v-btn>
+          <v-btn color="green" @click="payWithStripe">ชำระเงิน</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Snackbar แจ้งกรอกข้อมูลไม่ครบ -->
+    <v-snackbar v-model="snackbar" :timeout="3000" top right color="red" elevation="2">
+      กรุณากรอกข้อมูลให้ครบถ้วน
+      <template #actions>
+        <v-btn text @click="snackbar = false">ปิด</v-btn>
+      </template>
+    </v-snackbar>
+  </v-container>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { loadStripe } from '@stripe/stripe-js'
+
+const router = useRouter()
+const cart = ref([])
+const dialog = ref(false)
+const snackbar = ref(false)
+const customer = ref({
+  name: '',
+  phone: '',
+  address: '',
+  note: ''
+})
+
+// โหลด cart จาก localStorage
+const loadCart = () => {
+  const storedCart = localStorage.getItem('cart')
+  cart.value = storedCart ? JSON.parse(storedCart) : []
+}
+onMounted(() => loadCart())
+
+// ลบสินค้า
+const removeItem = (index) => {
+  cart.value.splice(index, 1)
+  localStorage.setItem('cart', JSON.stringify(cart.value))
+  window.dispatchEvent(new Event('cart-updated'))
+}
+
+// สรุปจำนวนและราคา
+const totalQty = computed(() => cart.value.reduce((sum, item) => sum + (item.qty || 0), 0))
+const totalPrice = computed(() => cart.value.reduce((sum, item) => sum + (item.qty || 0) * (item.price || 0), 0))
+
+// ชำระเงินด้วย Stripe
+const payWithStripe = async () => {
+  if (!customer.value.name || !customer.value.phone || !customer.value.address) {
+    snackbar.value = true
+    return
+  }
+
+  const stripe = await loadStripe('pk_test_51Rw04fDN579DoqMWhmPJf9W94mZZFa5VAM5rFssRLs7bpBKAAHwO2q7Vx0Jtos0dgwOlW7kK5JVoi0cKu9fuFJch00mBikVWG0') // เปลี่ยนเป็นของคุณ
+
+  const lineItems = cart.value.map(item => ({
+    price: item.priceId, // ใช้ Price ID ที่ได้จาก Dashboard
+    quantity: item.qty
+  }))
+
+  const { error } = await stripe.redirectToCheckout({
+    mode: 'payment',
+    lineItems,
+    successUrl: window.location.href + '?success=true',
+    cancelUrl: window.location.href + '?canceled=true'
+  })
+
+  if (error) alert(error.message)
+
+  // หลัง redirect ไป Stripe จะล้างตะกร้า
+  cart.value = []
+  localStorage.removeItem('cart')
+  window.dispatchEvent(new Event('cart-updated'))
+  dialog.value = false
+}
+// ตรวจสอบว่ามี query success/canceled หลัง redirect กลับมา
+onMounted(() => {
+  const params = new URLSearchParams(window.location.search)
+  if (params.get('success')) {
+    alert('✅ ชำระเงินสำเร็จ! ขอบคุณที่อุดหนุน')
+    cart.value = []
+    localStorage.removeItem('cart')
+    window.dispatchEvent(new Event('cart-updated'))
+    router.push('/')
+  } else if (params.get('canceled')) {
+    alert('❌ การชำระเงินถูกยกเลิก')
+  }
+})
+</script>
