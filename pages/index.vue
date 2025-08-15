@@ -125,14 +125,14 @@ const products = ref([
     image: '/yadom1.png',
     description: 'ยาดมสมุนไพรสกัด 100% กลิ่นสดชื่น'
   },
-  { 
+  { priceId:"price_1RwNN5DN579DoqMWyrrdFbE6",
     id: 5, 
     name: 'ยาดมมิ้นท์2', 
     price: 25, 
     image: '/yadom2.png',
     description: 'กลิ่นมิ้นท์เย็นสดชื่น'
   },
-  { 
+  { priceId:"price_1RwNODDN579DoqMWyKM4RDJ5",
     id: 6, 
     name: 'ยาดมตลับทอง2', 
     price: 35, 
