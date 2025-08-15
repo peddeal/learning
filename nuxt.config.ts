@@ -1,5 +1,9 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 export default defineNuxtConfig({
+    ssr: true,
+  nitro: {
+    preset: 'node-server'
+  },
    plugins: ['~/plugins/vuetify'],
   //...
   build: {
