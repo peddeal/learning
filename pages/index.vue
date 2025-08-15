@@ -29,11 +29,35 @@
             <v-btn color="green-darken-2" dark @click="addToCart(p)">
               ใส่ตะกร้า
             </v-btn>
+
+            <!-- ปุ่มรายละเอียด -->
+            <v-btn color="orange darken-2" dark @click="openDetail(p)">
+              รายละเอียด
+            </v-btn>
+
+            <v-btn color="blue darken-2" dark to="/cart">
+              ไปที่ตะกร้า
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
   </v-container>
+
+  <!-- Dialog แสดงรายละเอียดสินค้า -->
+  <v-dialog v-model="detailDialog" max-width="500">
+    <v-card>
+      <v-card-title class="text-h6">{{ selectedProduct.name }}</v-card-title>
+      <v-card-text>
+        <v-img :src="selectedProduct.image" max-height="200" class="mb-3" />
+        <div>{{ selectedProduct.description }}</div>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="green darken-2" text @click="detailDialog = false">ปิด</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
   <!-- Alert / Toast ด้านบน -->
   <v-snackbar
@@ -52,18 +76,69 @@
 <script setup>
 import { ref } from 'vue'
 
-const cartCount = ref(0)
 const snackbar = ref(false)
 const snackbarMessage = ref('')
 
+// Dialog สำหรับรายละเอียด
+const detailDialog = ref(false)
+const selectedProduct = ref({})
+
+// ฟังก์ชันเปิดรายละเอียด
+const openDetail = (product) => {
+  selectedProduct.value = product
+  detailDialog.value = true
+}
+
 // ข้อมูลสินค้า
 const products = ref([
-  { priceId: "price_1Rw0ALDN579DoqMWalh5iYnZ",id: 1, name: 'ยาดมสมุนไพรแท้', price: 30, image: '/yadom1.png' },
-  { priceId:"price_1Rw0DQDN579DoqMWq04Y5niI",id: 2, name: 'ยาดมมิ้นท์', price: 25, image: '/yadom2.png' },
-  { priceId:"price_1Rw0DkDN579DoqMWsRCa1Zwq",id: 3, name: 'ยาดมตลับทอง', price: 35, image: '/yadom3.png' },
-    { id: 4, name: 'ยาดมสมุนไพรแท้2', price: 30, image: '/yadom1.png' },
-  { id: 5, name: 'ยาดมมิ้นท์2', price: 25, image: '/yadom2.png' },
-  { id: 6, name: 'ยาดมตลับทอง2', price: 35, image: '/yadom3.png' },
+  { 
+    priceId: "price_1Rw0ALDN579DoqMWalh5iYnZ",
+    id: 1, 
+    name: 'ยาดมสมุนไพรแท้', 
+    price: 30, 
+    image: '/yadom1.png',
+    description: `เป็นยาดมสมุนไพรสกัดจากธรรมชาติ 100%
+กลิ่นหอมสดชื่น ช่วยให้รู้สึกกระปรี้กระเปร่าเมื่อต้องการความสดชื่นทันที
+พกพาง่าย ใช้ได้ทุกที่ ทุกเวลา
+เหมาะสำหรับผู้ที่ต้องการผ่อนคลาย หรือต้องการลดความง่วงระหว่างวัน`
+  },
+  { 
+    priceId:"price_1Rw0DQDN579DoqMWq04Y5niI",
+    id: 2, 
+    name: 'ยาดมมิ้นท์', 
+    price: 25, 
+    image: '/yadom2.png',
+    description: 'กลิ่นมิ้นท์เย็นสดชื่น ใช้ง่าย พกพาสะดวก'
+  },
+  { 
+    priceId:"price_1Rw0DkDN579DoqMWsRCa1Zwq",
+    id: 3, 
+    name: 'ยาดมตลับทอง', 
+    price: 35, 
+    image: '/yadom3.png',
+    description: 'ยาดมตลับทอง กลิ่นหอมเข้มข้น ใช้ได้ทุกเวลา'
+  },
+  { priceId:"price_1RwNM3DN579DoqMWxzQ3eZAa",
+    id: 4, 
+    name: 'ยาดมสมุนไพรแท้2', 
+    price: 30, 
+    image: '/yadom1.png',
+    description: 'ยาดมสมุนไพรสกัด 100% กลิ่นสดชื่น'
+  },
+  { 
+    id: 5, 
+    name: 'ยาดมมิ้นท์2', 
+    price: 25, 
+    image: '/yadom2.png',
+    description: 'กลิ่นมิ้นท์เย็นสดชื่น'
+  },
+  { 
+    id: 6, 
+    name: 'ยาดมตลับทอง2', 
+    price: 35, 
+    image: '/yadom3.png',
+    description: 'ยาดมตลับทอง กลิ่นหอมเข้มข้น'
+  },
 ])
 
 // Slide show
@@ -87,11 +162,9 @@ const addToCart = (product) => {
       price: Number(product.price)
     })
   }
-
   localStorage.setItem('cart', JSON.stringify(cart))
   window.dispatchEvent(new Event('cart-updated'))
 
-  // แสดง alert ด้านบนใหญ่ ๆ
   snackbarMessage.value = `✅ เพิ่ม ${product.name} ลงตะกร้าเรียบร้อย!`
   snackbar.value = true
 }
