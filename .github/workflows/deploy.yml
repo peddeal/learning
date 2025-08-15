@@ -27,15 +27,19 @@ jobs:
       - name: Build SSR Nuxt app
         run: yarn build
 
-      # 5. Zip entire project (รวม package.json)
-      - name: Zip project
-        run: zip -r nuxt3-app.zip . -x "*.git*" "*.github*" "node_modules/*"
+      # 5. Zip project (รวมไฟล์สำคัญสำหรับ SSR)
+      - name: Zip project for Azure
+        run: |
+          zip -r nuxt3-app.zip . \
+            -x "*.git*" "*.github*" "node_modules/*" \
+            -x "*.env*" "*.log" "README.md"
+          ls -l nuxt3-app.zip  # ตรวจสอบไฟล์ zip
 
-      # 6. Deploy to Azure
+      # 6. Deploy zip ไป Azure
       - name: Deploy SSR to Azure
         uses: azure/webapps-deploy@v2
         with:
-          app-name: Yadommm  # เปลี่ยนเป็นชื่อ app / slot ของคุณ
+          app-name: Yadommm  # ชื่อ App/Slot ของคุณ
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: nuxt3-app.zip
-          enable-oryx-build: false  # ใช้ build ที่เราสร้างเอง
+          enable-oryx-build: false  # ใช้ build ของเราเอง
