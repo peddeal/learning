@@ -53,7 +53,7 @@
           <v-text-field v-model="customer.name" label="ชื่อ-นามสกุล" required></v-text-field>
           <v-text-field v-model="customer.phone" label="เบอร์โทรศัพท์" required></v-text-field>
           <v-textarea v-model="customer.address" label="ที่อยู่" rows="3" required></v-textarea>
-          <v-textarea v-model="customer.note" label="หมายเหตุ (ถ้ามี)" rows="2"></v-textarea>
+          <v-textarea v-model="customer.note" label="หมายเหตุ (ถ้ามี)" rows="2" required></v-textarea>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -109,7 +109,7 @@ const totalPrice = computed(() => cart.value.reduce((sum, item) => sum + (item.q
 
 // ชำระเงินด้วย Stripe
 const payWithStripe = async () => {
-  if (!customer.value.name || !customer.value.phone || !customer.value.address) {
+  if (!customer.value.name || !customer.value.phone || !customer.value.address ) {
     snackbar.value = true
     return
   }
@@ -121,6 +121,10 @@ const payWithStripe = async () => {
     quantity: item.qty
   }))
 
+  // เก็บ customer และ cart ไว้ชั่วคราว
+  localStorage.setItem('tempCustomer', JSON.stringify(customer.value))
+  localStorage.setItem('tempCart', JSON.stringify(cart.value))
+
   const { error } = await stripe.redirectToCheckout({
     mode: 'payment',
     lineItems,
@@ -130,23 +134,57 @@ const payWithStripe = async () => {
 
   if (error) alert(error.message)
 
-  // หลัง redirect ไป Stripe จะล้างตะกร้า
-  cart.value = []
-  localStorage.removeItem('cart')
-  window.dispatchEvent(new Event('cart-updated'))
   dialog.value = false
 }
-// ตรวจสอบว่ามี query success/canceled หลัง redirect กลับมา
+
+// ตรวจสอบ success/canceled
 onMounted(() => {
   const params = new URLSearchParams(window.location.search)
   if (params.get('success')) {
-    alert('✅ ชำระเงินสำเร็จ! ขอบคุณที่อุดหนุน')
-    cart.value = []
-    localStorage.removeItem('cart')
-    window.dispatchEvent(new Event('cart-updated'))
-    router.push('/')
+    (async () => {
+      // โหลดค่าชั่วคราว
+      const tempCustomer = JSON.parse(localStorage.getItem('tempCustomer') || '{}')
+      const tempCart = JSON.parse(localStorage.getItem('tempCart') || '[]')
+
+      await submitToGoogleForm(tempCustomer, tempCart)
+
+      alert('✅ ชำระเงินสำเร็จ! ขอบคุณที่อุดหนุน')
+
+      // ล้างค่าเก่า
+      cart.value = []
+      customer.value = { name: '', phone: '', address: '', note: '' }
+      localStorage.removeItem('cart')
+      localStorage.removeItem('tempCustomer')
+      localStorage.removeItem('tempCart')
+      window.dispatchEvent(new Event('cart-updated'))
+
+      router.push('/')
+    })()
   } else if (params.get('canceled')) {
     alert('❌ การชำระเงินถูกยกเลิก')
   }
 })
+
+// ส่ง Google Form โดยใช้ค่า temp
+const submitToGoogleForm = async (cust, cartItems) => {
+  const formUrl = "https://docs.google.com/forms/u/0/d/e/1FAIpQLScyWg66noZ7J2tBzUVL8Mbm4G1ivGJoTq-QP0dezHuRQ0UA9A/formResponse"
+
+  const formData = new FormData()
+  formData.append("entry.480087022", cust.name)
+  formData.append("entry.1716946672", cust.phone)
+  formData.append("entry.251996553", cust.address)
+  formData.append("entry.1137939559", cust.note)
+
+  const cartText = cartItems.map(item =>
+    `สินค้า: ${item.name}, ราคา: ${item.price}, จำนวน: ${item.qty}, รายละเอียด: ${item.description || ''}`
+  ).join("\n")
+
+  formData.append("entry.764732426", cartText)
+
+  await fetch(formUrl, {
+    method: "POST",
+    body: formData,
+    mode: "no-cors"
+  })
+}
 </script>
