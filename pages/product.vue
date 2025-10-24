@@ -90,6 +90,7 @@ const products = ref([
     name: 'Original Blend', 
     price: 50, 
     image: '/product1.jpg',
+    description: ''
     
   },
   { 
@@ -97,7 +98,7 @@ const products = ref([
     id: 2, 
     name: 'Energy Refresh', 
     price: 50, 
-    image: '/product2.jpg',
+    image: '/product2.jpg',description: ''
     
   },
   { 
@@ -105,7 +106,7 @@ const products = ref([
     id: 3, 
     name: 'Focus Boost', 
     price: 50, 
-    image: '/product3.jpg',
+    image: '/product3.jpg',description: ''
     
   },
   { 
@@ -113,7 +114,7 @@ const products = ref([
     id: 4, 
     name: 'Winter Calm', 
     price: 50, 
-    image: '/product4.jpg',
+    image: '/product4.jpg',description: ''
     
   },
   { 
@@ -146,7 +147,7 @@ const products = ref([
   { priceId:"price_1RwNM3DN579DoqMWxzQ3eZAa",
     id: 8, 
     name: 'Authentic Herbal Inhaler2', 
-    price: 9, 
+    price: 30, 
     image: '/yadom1.png',
     description: 'ยาดมสมุนไพรสกัด 100% กลิ่นสดชื่น'
   },

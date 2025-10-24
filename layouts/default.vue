@@ -21,7 +21,7 @@
           </v-btn>
 
           <!-- ไอคอนตะกร้า -->
-          <v-btn icon :to="{ path: '/cart', hash: '#cart'} " style="color: black;">
+          <v-btn icon to="/cart" style="color: black;">
             <v-icon>mdi-cart</v-icon>
           </v-btn>
         </div>
@@ -49,6 +49,8 @@
 </template>
 
 <script setup>
+import Cart from '~/pages/cart.vue';
+
 const menuItems = [
   { label: "Home", to: "/" },
   { label: "About us", to: "/about" },

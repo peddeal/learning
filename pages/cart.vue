@@ -1,6 +1,6 @@
 <template>
   <v-container class="py-6">
-    <h2 class="text-h5 mb-4" id="cart">🛒 Shopping Cart</h2>
+    <h2 class="text-h5 mb-4" >🛒 Shopping Cart</h2>
 
     <!-- รายการสินค้า -->
     <v-row v-if="cart.length > 0">
@@ -58,8 +58,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text color="red" @click="dialog = false">ยกเลิก</v-btn>
-          <v-btn color="green" @click="payWithStripe">ชำระเงิน</v-btn>
+          <v-btn text color="red" @click="dialog = false">Cancel</v-btn>
+          <v-btn color="green" @click="payWithStripe">Buy</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -149,7 +149,7 @@ onMounted(() => {
 
       await submitToGoogleForm(tempCustomer, tempCart)
 
-      alert('✅ ชำระเงินสำเร็จ! ขอบคุณที่อุดหนุน')
+      alert('✅ Buy Complete Thank You!')
 
       // ล้างค่าเก่า
       cart.value = []
@@ -162,7 +162,7 @@ onMounted(() => {
       router.push('/')
     })()
   } else if (params.get('canceled')) {
-    alert('❌ การชำระเงินถูกยกเลิก')
+    alert('❌ Transaction was canceled')
   }
 })
 
