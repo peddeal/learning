@@ -1,7 +1,7 @@
 <template >
   <v-app  style="background-color: antiquewhite;">
     <!-- Hero Banner -->
-    <v-img src="/public/test.png" cover>
+    <v-img src="/public/test2.png" cover>
       <!-- แถบเมนู -->
       <div
         class="d-flex justify-end align-start px-6 py-2"
