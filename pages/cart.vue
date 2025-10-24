@@ -1,6 +1,6 @@
 <template>
   <v-container class="py-6">
-    <h2 class="text-h5 mb-4">🛒 ตะกร้าสินค้า</h2>
+    <h2 class="text-h5 mb-4" id="cart">🛒 Shopping Cart</h2>
 
     <!-- รายการสินค้า -->
     <v-row v-if="cart.length > 0">
@@ -16,7 +16,7 @@
             </v-col>
             <v-col cols="4" class="text-right">
               <v-btn color="red" text @click="removeItem(index)">
-                ลบ
+               Delete
               </v-btn>
             </v-col>
           </v-row>
@@ -25,21 +25,21 @@
     </v-row>
 
     <div v-else class="text-center grey--text">
-      ไม่มีสินค้าในตะกร้า
+      No Product
     </div>
 
     <!-- สรุปสินค้า -->
     <v-card class="pa-4 mt-4" outlined v-if="cart.length > 0">
       <v-row>
         <v-col cols="6">
-          <strong>รวมจำนวนสินค้า:</strong> {{ totalQty }}
+          <strong>Total Product:</strong> {{ totalQty }}
         </v-col>
         <v-col cols="6" class="text-right">
-          <strong>ราคารวม:</strong> ฿{{ totalPrice }}
+          <strong>Total Prize:</strong> ฿{{ totalPrice }}
         </v-col>
       </v-row>
       <v-btn color="green" class="mt-2" @click="dialog = true">
-        สั่งซื้อ
+        Buy
       </v-btn>
     </v-card>
 
@@ -47,13 +47,14 @@
     <v-dialog v-model="dialog" max-width="500">
       <v-card>
         <v-card-title>
-          <span class="text-h6">กรอกข้อมูลผู้ซื้อ</span>
+          <span class="text-h6">Fill In Buyer Information
+</span>
         </v-card-title>
         <v-card-text>
-          <v-text-field v-model="customer.name" label="ชื่อ-นามสกุล" required></v-text-field>
-          <v-text-field v-model="customer.phone" label="เบอร์โทรศัพท์" required></v-text-field>
-          <v-textarea v-model="customer.address" label="ที่อยู่" rows="3" required></v-textarea>
-          <v-textarea v-model="customer.note" label="หมายเหตุ (ถ้ามี)" rows="2" required></v-textarea>
+          <v-text-field v-model="customer.name" label="Name" required></v-text-field>
+          <v-text-field v-model="customer.phone" label="Phone" required></v-text-field>
+          <v-textarea v-model="customer.address" label="Address" rows="3" required></v-textarea>
+          <v-textarea v-model="customer.note" label="Remark" rows="2" required></v-textarea>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -65,7 +66,7 @@
 
     <!-- Snackbar แจ้งกรอกข้อมูลไม่ครบ -->
     <v-snackbar v-model="snackbar" :timeout="3000" top right color="red" elevation="2">
-      กรุณากรอกข้อมูลให้ครบถ้วน
+      Please fill out the information completely.
       <template #actions>
         <v-btn text @click="snackbar = false">ปิด</v-btn>
       </template>

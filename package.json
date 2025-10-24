@@ -8,10 +8,11 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-     "start": "node .output/server/index.mjs"
+    "start": "node .output/server/index.mjs"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@nuxtjs/i18n": "^10.1.0",
     "@stripe/stripe-js": "^7.8.0",
     "nuxt": "^4.0.3",
     "simple-git": "^3.28.0",

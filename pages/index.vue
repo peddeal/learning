@@ -1,171 +1,170 @@
 <template>
-  <!-- Hero Section -->
-  <v-container class="text-center mt-10">
-    <v-img src="" max-width="200" class="mx-auto" />
-    <h2 class="mt-4">ยาดมหอมสดชื่น พกง่าย สดชื่นได้ทุกที่!</h2>
-    <v-btn color="green-darken-2" dark class="ma-2">สั่งซื้อทันที</v-btn>
-    <v-btn color="teal-lighten-2" dark class="ma-2">Customize</v-btn>
-    <v-btn variant="outlined" color="green-darken-2" class="ma-2">ดูรายละเอียด</v-btn>
-  </v-container>
+ <!-- Hero Section -->
+<v-container class="text-center py-24 px-6 bg-gradient-to-b from-amber-50 via-amber-100 to-amber-50">
+  <!-- โลโก้ชื่อแบรนด์ -->
+  <h2
+    class="text-6xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-700 to-amber-900 drop-shadow-xl tracking-widest animate-fadeIn"
+    style="font-family: 'Sarabun', sans-serif;"
+  >
+    หอมไทย
+  </h2>
 
-  <!-- Slide Show -->
-  <v-container class="pa-4 mb-8">
-    <v-carousel v-model="slide" cycle height="300" show-arrows show-arrows-on-hover>
-      <v-carousel-item v-for="(item, i) in images" :key="i" :value="i">
-        <v-img :src="item" class="fill-height"></v-img>
-      </v-carousel-item>
-    </v-carousel>
-  </v-container>
+  <!-- คำคม -->
+  <h1
+    class="mt-8 text-3xl md:text-4xl lg:text-5xl font-medium text-brown-800 leading-snug max-w-4xl mx-auto animate-slideUp"
+    style="font-family: 'Kanit', sans-serif; text-shadow: 1px 1px 4px rgba(0,0,0,0.2); letter-spacing: 0.5px;"
+  >
+     A Thai brand that delivers the fragrance of happiness and inner balance<br>
+    </br> to consumers around the world.
 
-  <!-- Product List -->
-  <v-container class="mt-8">
-    <v-row>
-      <v-col v-for="(p, index) in products" :key="index" cols="12" sm="4">
-        <v-card>
-          <v-img :src="p.image" height="200px" />
-          <v-card-title>{{ p.name }}</v-card-title>
-          <v-card-subtitle>฿{{ p.price }}</v-card-subtitle>
-          <v-card-actions>
-            <v-btn color="green-darken-2" dark @click="addToCart(p)">
-              ใส่ตะกร้า
-            </v-btn>
+  </h1>
 
-            <!-- ปุ่มรายละเอียด -->
-            <v-btn color="orange darken-2" dark @click="openDetail(p)">
-              รายละเอียด
-            </v-btn>
+  <!-- เส้นตกแต่ง -->
+  <div class="mx-auto mt-8 mb-12 w-28 h-1 rounded-full bg-gradient-to-r from-amber-700 to-amber-400 shadow-lg"></div>
 
-            <v-btn color="blue darken-2" dark to="/cart">
-              ไปที่ตะกร้า
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <!-- ปุ่ม -->
+  <v-btn
+    variant="outlined"
+    color="brown"
+    class="ma-2"
+    :to="{ path: '/product', hash: '#product' }"
+  >
+    Buy Now
+  </v-btn>
 
-  <!-- Dialog แสดงรายละเอียดสินค้า -->
-  <v-dialog v-model="detailDialog" max-width="500">
-    <v-card>
-      <v-card-title class="text-h6">{{ selectedProduct.name }}</v-card-title>
+  <v-btn variant="outlined" color="brown" class="ma-2"    :to="{ path: '/Customize', hash: '#cust' }">
+    Customize
+  </v-btn>
+
+  <v-btn variant="outlined" color="brown" class="ma-2" @click="openCarousel">
+    View details
+
+  </v-btn>
+</v-container>
+
+
+  <!-- GMP Strip -->
+  <div class="gmp-strip mt-12 mb-16">
+    <img
+      v-for="(gmp, i) in gmpImages"
+      :key="i"
+      :src="gmp"
+      alt="GMP Certification"
+      class="gmp-img animate-fadeIn"
+    />
+  </div>
+
+  <compo1 />
+
+  <!-- Dialog Carousel -->
+  <v-dialog v-model="carouselDialog" max-width="700" >
+    <v-card class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl shadow-xl border border-amber-300" style="background-color: antiquewhite;">
+      <v-card-title class="text-center text-brown-800 font-semibold text-xl md:text-2xl">
+        The herbal inhaler contains a variety of herbs, including eucalyptus<br></br> cinnamon, cardamom, star anise, black pepper<br></br> betel charcoal, camphor, musk, and menthol.
+
+      </v-card-title>
+
       <v-card-text>
-        <v-img :src="selectedProduct.image" max-height="200" class="mb-3" />
-        <div>{{ selectedProduct.description }}</div>
+        <v-carousel v-model="slide" cycle height="350" show-arrows show-arrows-on-hover hide-delimiter-background style="background-color: antiquewhite;">
+          <v-carousel-item
+            v-for="(item, i) in images"
+            :key="i"
+            :value="i"
+            class="rounded-xl overflow-hidden shadow-lg"
+          >
+            <v-img :src="item" class="fill-height transition-transform hover:scale-105 duration-500"></v-img>
+          </v-carousel-item>
+        </v-carousel>
       </v-card-text>
+
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="green darken-2" text @click="detailDialog = false">ปิด</v-btn>
+        <v-btn color="brown" text class="font-semibold" @click="carouselDialog = false">
+          ปิด
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
-
-  <!-- Alert / Toast ด้านบน -->
-  <v-snackbar
-    v-model="snackbar"
-    timeout="2500"
-    color="green darken-2"
-    top
-    elevation="8"
-    shaped
-    multi-line
-  >
-    <span class="text-h6 white--text font-weight-bold">{{ snackbarMessage }}</span>
-  </v-snackbar>
+  
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useSwitchLocalePath } from '#i18n'
 
-const snackbar = ref(false)
-const snackbarMessage = ref('')
-
-// Dialog สำหรับรายละเอียด
-const detailDialog = ref(false)
-const selectedProduct = ref({})
-
-// ฟังก์ชันเปิดรายละเอียด
-const openDetail = (product) => {
-  selectedProduct.value = product
-  detailDialog.value = true
-}
-
-// ข้อมูลสินค้า
-const products = ref([
-  { 
-    priceId: "price_1Rw0ALDN579DoqMWalh5iYnZ",
-    id: 1, 
-    name: 'ยาดมสมุนไพรแท้', 
-    price: 30, 
-    image: '/yadom1.png',
-    description: `เป็นยาดมสมุนไพรสกัดจากธรรมชาติ 100%
-กลิ่นหอมสดชื่น ช่วยให้รู้สึกกระปรี้กระเปร่าเมื่อต้องการความสดชื่นทันที
-พกพาง่าย ใช้ได้ทุกที่ ทุกเวลา
-เหมาะสำหรับผู้ที่ต้องการผ่อนคลาย หรือต้องการลดความง่วงระหว่างวัน`
-  },
-  { 
-    priceId:"price_1Rw0DQDN579DoqMWq04Y5niI",
-    id: 2, 
-    name: 'ยาดมมิ้นท์', 
-    price: 25, 
-    image: '/yadom2.png',
-    description: 'กลิ่นมิ้นท์เย็นสดชื่น ใช้ง่าย พกพาสะดวก'
-  },
-  { 
-    priceId:"price_1Rw0DkDN579DoqMWsRCa1Zwq",
-    id: 3, 
-    name: 'ยาดมตลับทอง', 
-    price: 35, 
-    image: '/yadom3.png',
-    description: 'ยาดมตลับทอง กลิ่นหอมเข้มข้น ใช้ได้ทุกเวลา'
-  },
-  { priceId:"price_1RwNM3DN579DoqMWxzQ3eZAa",
-    id: 4, 
-    name: 'ยาดมสมุนไพรแท้2', 
-    price: 30, 
-    image: '/yadom1.png',
-    description: 'ยาดมสมุนไพรสกัด 100% กลิ่นสดชื่น'
-  },
-  { priceId:"price_1RwNN5DN579DoqMWyrrdFbE6",
-    id: 5, 
-    name: 'ยาดมมิ้นท์2', 
-    price: 25, 
-    image: '/yadom2.png',
-    description: 'กลิ่นมิ้นท์เย็นสดชื่น'
-  },
-  { priceId:"price_1RwNODDN579DoqMWyKM4RDJ5",
-    id: 6, 
-    name: 'ยาดมตลับทอง2', 
-    price: 35, 
-    image: '/yadom3.png',
-    description: 'ยาดมตลับทอง กลิ่นหอมเข้มข้น'
-  },
-])
-
-// Slide show
+const carouselDialog = ref(false)
 const slide = ref(0)
+
 const images = [
-  '/slideshow1.png',
-  '/slideshow2.png',
-  '/slideshow3.png'
+  '/b1.jpg', '/b2.jpg', '/b3.jpg', '/b4.jpg',
+  '/b5.jpg', '/b6.jpg', '/b7.jpg', '/b8.jpg', '/b9.jpg'
 ]
 
-// ฟังก์ชันเพิ่มสินค้า
-const addToCart = (product) => {
-  let cart = JSON.parse(localStorage.getItem('cart') || '[]')
-  const index = cart.findIndex(item => item.id === product.id)
-  if (index !== -1) {
-    cart[index].qty += 1
-  } else {
-    cart.push({
-      ...product,
-      qty: 1,
-      price: Number(product.price)
-    })
-  }
-  localStorage.setItem('cart', JSON.stringify(cart))
-  window.dispatchEvent(new Event('cart-updated'))
+const gmpImages = [
+  '/gmp3.jpg',
+  '/gmp1.jpg',
+  '/gmp2.jpg',
+]
 
-  snackbarMessage.value = `✅ เพิ่ม ${product.name} ลงตะกร้าเรียบร้อย!`
-  snackbar.value = true
+const openCarousel = () => {
+  slide.value = 0
+  carouselDialog.value = true
 }
+
+const switchLocalePath = useSwitchLocalePath()
 </script>
+
+<style scoped>
+/* GMP Strip */
+.gmp-strip {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  gap: 12px;
+  padding: 0 1rem;
+}
+
+.gmp-img {
+  width: 33.333%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 1rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.gmp-img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Responsive GMP Strip */
+@media (max-width: 768px) {
+  .gmp-strip {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .gmp-img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 1s ease forwards;
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(50px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-slideUp {
+  animation: slideUp 1s ease forwards;
+}
+</style>

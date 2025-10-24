@@ -1,12 +1,12 @@
 <template>
-  <v-container fluid class="pa-0" style="background: linear-gradient(135deg, #d4edda, #c8f7c5); min-height: 100vh;">
+  <v-container fluid class="pa-0" style="background-color: antiquewhite; min-height: 100vh;">
     
     <!-- Hero Section -->
     <v-container class="text-center py-12">
       <h1 class="text-h2 font-bold mb-3">รีวิวจากลูกค้า YaDom</h1>
       <p class="text-subtitle-1 mb-6">ลูกค้าของเราพูดถึงความสดชื่นและคุณภาพของยาดม</p>
       <v-btn color="green-darken-2" dark class="mx-2" to="/">กลับหน้าหลัก</v-btn>
-      <v-btn color="teal-lighten-2" dark class="mx-2" to="/products">ไปหน้าสินค้า</v-btn>
+      <v-btn color="teal-lighten-2" dark class="mx-2" :to="{ path: '/product', hash: '#product' }">ไปหน้าสินค้า</v-btn>
     </v-container>
 
     <!-- Reviews Grid -->

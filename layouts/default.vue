@@ -1,77 +1,60 @@
-<template>
-  <v-app>
-    <!-- Header -->
-    <v-app-bar color="green-darken-2" dark>
-      <v-app-bar-title>YaDom Shop</v-app-bar-title>
-      <v-spacer></v-spacer>
+<template >
+  <v-app  style="background-color: antiquewhite;">
+    <!-- Hero Banner -->
+    <v-img src="/public/test.png" cover>
+      <!-- แถบเมนู -->
+      <div
+        class="d-flex justify-end align-start px-6 py-2"
+        style="position: absolute; top: 0; left: 0; right: 0;"
+      >
+        <!-- เมนู -->
+        <div>
+          <v-btn
+            v-for="(item, i) in menuItems"
+            :key="i"
+            variant="text"
+            class="mx-3"
+            :to="item.to"
+            style="color: black; font-weight: 500;"
+          >
+            {{ item.label }}
+          </v-btn>
 
-      <v-btn text to="../">
-        <v-icon left>mdi-home</v-icon>
-        หน้าแรก
-      </v-btn>
-      <v-btn text to="../review">
-        <v-icon left>mdi-eye</v-icon>
-        วิสัยทัศน์
-      </v-btn>
-      <v-btn text to="../review">
-        <v-icon left>mdi-account-group</v-icon>
-        บอร์ดบริหาร
-      </v-btn>
-      <v-btn text to="../review">
-        <v-icon left>mdi-leaf</v-icon>
-        สรรพคุณ
-      </v-btn>
-      <v-btn text to="../about">
-        <v-icon left>mdi-cube</v-icon>
-        สินค้า
-      </v-btn>
-      <v-btn text to="../review">
-        <v-icon left>mdi-star</v-icon>
-        รีวิว
-      </v-btn>
-      <v-btn text>
-        <v-icon left>mdi-phone</v-icon>
-        ติดต่อ
-      </v-btn>
+          <!-- ไอคอนตะกร้า -->
+          <v-btn icon :to="{ path: '/cart', hash: '#cart'} " style="color: black;">
+            <v-icon>mdi-cart</v-icon>
+          </v-btn>
+        </div>
+      </div>
+    </v-img>
 
-      <v-btn icon to="../cart">
-        <v-badge :content="cartCount" color="red" overlap>
-          <v-icon>mdi-cart</v-icon>
-        </v-badge>
-      </v-btn>
-    </v-app-bar>
-
-    <!-- Main content -->
+    <!-- Main Content -->
     <v-main>
-      <NuxtPage />
+      <v-container class="py-10">
+        <NuxtPage />
+      </v-container>
     </v-main>
 
     <!-- Footer -->
-    <v-footer color="green-darken-2" app>
-      <v-col class="text-center white--text">
-        © 2025 YaDom Shop | ติดต่อ: 086-386-2827
-      </v-col>
+    <v-footer color="brown lighten-3" app>
+      <v-container>
+        <v-row justify="center">
+          <v-col cols="12" class="text-center text-white">
+            © 2025 HOM THAI| ติดต่อ:02-123-4567
+          </v-col>
+        </v-row>
+      </v-container>
     </v-footer>
   </v-app>
 </template>
+
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-
-const cartCount = ref(0)
-
-const updateCartCount = () => {
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-  cartCount.value = cart.length
-}
-
-onMounted(() => {
-  updateCartCount()
-
-  // ฟัง event จาก addToCart เพื่ออัปเดตจำนวนสินค้า
-  window.addEventListener('cart-updated', updateCartCount)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('cart-updated', updateCartCount)
-})
+const menuItems = [
+  { label: "Home", to: "/" },
+  { label: "About us", to: "/about" },
+  { label: "Products", to: "/product" },
+  { label: "Review", to: "/review" },
+  { label: "Our stores", to: "/stores" },
+  { label: "Contact us", to: "/contact" },
+]
 </script>
